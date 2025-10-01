@@ -27,6 +27,11 @@ public interface IAuthService
     /// Verifica se um email já está cadastrado
     /// </summary>
     Task<bool> EmailExistsAsync(string email);
+    
+    /// <summary>
+    /// Atualiza o perfil completo do usuário
+    /// </summary>
+    Task<UserResponse?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request);
 }
 
 

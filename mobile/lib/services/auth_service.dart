@@ -17,6 +17,7 @@ class AuthService {
   Future<RegisterResult> register({
     required String name,
     required String email,
+    required String cpf,
     required String password,
     String? phone,
   }) async {
@@ -31,6 +32,7 @@ class AuthService {
         body: json.encode({
           'name': name,
           'email': email,
+          'cpf': cpf,
           'password': password,
           'phone': phone,
         }),
@@ -205,6 +207,102 @@ class AuthService {
       return false;
     }
   }
+
+  // Atualizar perfil completo
+  Future<UpdateProfileResult> updateProfile({
+    required String token,
+    required String name,
+    String? phone,
+    DateTime? birthDate,
+    String? address,
+    String? city,
+    String? state,
+    String? zipCode,
+    String? bio,
+  }) async {
+    try {
+      if (kDebugMode) {
+        print('Atualizando perfil em: $baseUrl/auth/profile');
+      }
+      
+      final response = await http.put(
+        Uri.parse('$baseUrl/auth/profile'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'name': name,
+          'phone': phone,
+          'birthDate': birthDate?.toIso8601String(),
+          'address': address,
+          'city': city,
+          'state': state,
+          'zipCode': zipCode,
+          'bio': bio,
+        }),
+      );
+
+      if (kDebugMode) {
+        print('Status update: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        return UpdateProfileResult(success: true);
+      }
+      
+      // Tratar erros específicos
+      if (response.statusCode == 400) {
+        try {
+          final errorData = json.decode(response.body);
+          
+          // Verificar erros de validação
+          if (errorData['errors'] != null) {
+            final errors = errorData['errors'] as Map<String, dynamic>;
+            
+            // Pegar primeiro erro e exibir
+            if (errors.isNotEmpty) {
+              final firstKey = errors.keys.first;
+              final firstError = errors[firstKey];
+              
+              if (firstError is List && firstError.isNotEmpty) {
+                return UpdateProfileResult(
+                  success: false,
+                  errorMessage: '$firstKey: ${firstError.first}',
+                );
+              }
+            }
+          }
+          
+          // Mensagem genérica da API
+          if (errorData['message'] != null) {
+            return UpdateProfileResult(
+              success: false,
+              errorMessage: errorData['message'].toString(),
+            );
+          }
+        } catch (e) {
+          if (kDebugMode) {
+            print('Erro ao parsear erro da API: $e');
+          }
+        }
+      }
+
+      return UpdateProfileResult(
+        success: false,
+        errorMessage: 'Erro ao atualizar perfil. Verifique os dados.',
+      );
+    } catch (e) {
+      if (kDebugMode) {
+        print('Erro ao atualizar perfil: $e');
+      }
+      return UpdateProfileResult(
+        success: false,
+        errorMessage: 'Erro de conexão. Verifique se a API está rodando.',
+      );
+    }
+  }
 }
 
 // Resultado do registro (com tratamento de erros)
@@ -216,6 +314,17 @@ class RegisterResult {
   RegisterResult({
     required this.success,
     this.authResponse,
+    this.errorMessage,
+  });
+}
+
+// Resultado da atualização de perfil
+class UpdateProfileResult {
+  final bool success;
+  final String? errorMessage;
+
+  UpdateProfileResult({
+    required this.success,
     this.errorMessage,
   });
 }
@@ -252,17 +361,37 @@ class UserProfile {
   final String id;
   final String name;
   final String email;
+  final String cpf;
   final String? phone;
+  final DateTime? birthDate;
+  final String? address;
+  final String? city;
+  final String? state;
+  final String? zipCode;
+  final String? profilePhoto;
+  final String? bio;
   final DateTime createdAt;
   final bool isActive;
+  final bool isProfileComplete;
+  final int profileCompletionPercentage;
 
   UserProfile({
     required this.id,
     required this.name,
     required this.email,
+    required this.cpf,
     this.phone,
+    this.birthDate,
+    this.address,
+    this.city,
+    this.state,
+    this.zipCode,
+    this.profilePhoto,
+    this.bio,
     required this.createdAt,
     required this.isActive,
+    required this.isProfileComplete,
+    required this.profileCompletionPercentage,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -270,9 +399,19 @@ class UserProfile {
       id: json['id'],
       name: json['name'],
       email: json['email'],
+      cpf: json['cpf'] ?? json['CPF'] ?? '',
       phone: json['phone'],
+      birthDate: json['birthDate'] != null ? DateTime.parse(json['birthDate']) : null,
+      address: json['address'],
+      city: json['city'],
+      state: json['state'],
+      zipCode: json['zipCode'],
+      profilePhoto: json['profilePhoto'],
+      bio: json['bio'],
       createdAt: DateTime.parse(json['createdAt']),
       isActive: json['isActive'],
+      isProfileComplete: json['isProfileComplete'] ?? false,
+      profileCompletionPercentage: json['profileCompletionPercentage'] ?? 0,
     );
   }
 }

@@ -16,6 +16,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
+  final _cpfController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _authService = AuthService();
@@ -29,6 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
+    _cpfController.dispose();
     _passwordController.dispose();
     _phoneController.dispose();
     super.dispose();
@@ -49,6 +51,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final result = await _authService.register(
       name: _nameController.text.trim(),
       email: _emailController.text.trim(),
+      cpf: _cpfController.text.trim().replaceAll(RegExp(r'[^\d]'), ''),
       password: _passwordController.text,
       phone: phoneWithCountryCode,
     );
@@ -183,6 +186,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                   if (!emailRegex.hasMatch(value.trim())) {
                     return 'Email inválido';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Campo CPF
+              TextFormField(
+                controller: _cpfController,
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(11),
+                ],
+                decoration: InputDecoration(
+                  labelText: 'CPF',
+                  hintText: '000.000.000-00',
+                  prefixIcon: const Icon(Icons.badge),
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  helperText: 'Apenas números (11 dígitos)',
+                ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    return 'CPF é obrigatório';
+                  }
+                  final cpfDigits = value.trim().replaceAll(RegExp(r'[^\d]'), '');
+                  if (cpfDigits.length != 11) {
+                    return 'CPF deve ter 11 dígitos';
+                  }
+                  // Validação básica: todos dígitos iguais
+                  if (RegExp(r'^(\d)\1*$').hasMatch(cpfDigits)) {
+                    return 'CPF inválido';
                   }
                   return null;
                 },

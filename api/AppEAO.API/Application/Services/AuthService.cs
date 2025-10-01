@@ -47,6 +47,7 @@ public class AuthService : IAuthService
             var user = new User(
                 name: request.Name,
                 email: request.Email,
+                cpf: request.CPF,
                 passwordHash: passwordHash,
                 phone: request.Phone
             );
@@ -133,9 +134,19 @@ public class AuthService : IAuthService
                 Id = user.Id,
                 Name = user.Name,
                 Email = user.Email,
+                CPF = user.CPF,
                 Phone = user.Phone,
+                BirthDate = user.BirthDate,
+                Address = user.Address,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                ProfilePhoto = user.ProfilePhoto,
+                Bio = user.Bio,
                 CreatedAt = user.CreatedAt,
-                IsActive = user.IsActive
+                IsActive = user.IsActive,
+                IsProfileComplete = user.IsProfileComplete,
+                ProfileCompletionPercentage = user.GetProfileCompletionPercentage()
             };
         }
         catch (Exception ex)
@@ -148,6 +159,62 @@ public class AuthService : IAuthService
     public async Task<bool> EmailExistsAsync(string email)
     {
         return await _userRepository.ExistsByEmailAsync(email);
+    }
+
+    public async Task<UserResponse?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request)
+    {
+        try
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null || !user.IsActive)
+            {
+                _logger.LogWarning("Tentativa de atualizar perfil de usuário inexistente ou inativo: {UserId}", userId);
+                return null;
+            }
+
+            // Atualizar perfil usando método do domínio
+            user.UpdateFullProfile(
+                name: request.Name,
+                phone: request.Phone,
+                birthDate: request.BirthDate,
+                address: request.Address,
+                city: request.City,
+                state: request.State,
+                zipCode: request.ZipCode,
+                bio: request.Bio
+            );
+
+            await _userRepository.UpdateAsync(user);
+            await _userRepository.SaveChangesAsync();
+
+            _logger.LogInformation("Perfil atualizado: {Email}", user.Email);
+
+            return new UserResponse
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Email = user.Email,
+                CPF = user.CPF,
+                Phone = user.Phone,
+                BirthDate = user.BirthDate,
+                Address = user.Address,
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                ProfilePhoto = user.ProfilePhoto,
+                Bio = user.Bio,
+                CreatedAt = user.CreatedAt,
+                IsActive = user.IsActive,
+                IsProfileComplete = user.IsProfileComplete,
+                ProfileCompletionPercentage = user.GetProfileCompletionPercentage()
+            };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao atualizar perfil do usuário");
+            return null;
+        }
     }
 
     private string GenerateJwtToken(User user)

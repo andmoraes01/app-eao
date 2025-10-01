@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/token_storage.dart';
 import 'login_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -151,6 +152,99 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             const SizedBox(height: 20),
                             
+                            // Indicador de Completude do Perfil
+                            if (_profile!.profileCompletionPercentage < 100)
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                margin: const EdgeInsets.only(bottom: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade100,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: Colors.orange, width: 2),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 28),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Text(
+                                            'Complete seus dados para melhor experiência!',
+                                            style: TextStyle(
+                                              color: Colors.orange.shade900,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Barra de progresso
+                                    Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Dados preenchidos:',
+                                              style: TextStyle(
+                                                color: Colors.orange.shade900,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                            Text(
+                                              '${_profile!.profileCompletionPercentage}%',
+                                              style: TextStyle(
+                                                color: Colors.orange.shade900,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(10),
+                                          child: LinearProgressIndicator(
+                                            value: _profile!.profileCompletionPercentage / 100,
+                                            minHeight: 8,
+                                            backgroundColor: Colors.orange.shade200,
+                                            valueColor: const AlwaysStoppedAnimation<Color>(Colors.orange),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: ElevatedButton.icon(
+                                        onPressed: () async {
+                                          final result = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const EditProfileScreen(),
+                                            ),
+                                          );
+                                          if (result == true) {
+                                            _loadProfile();
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.orange,
+                                          foregroundColor: Colors.white,
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                        ),
+                                        icon: const Icon(Icons.edit),
+                                        label: const Text('COMPLETAR PERFIL'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            
                             // Avatar
                             CircleAvatar(
                               radius: 60,
@@ -221,16 +315,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    'INFORMAÇÕES',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 2,
-                                      color: Colors.grey,
-                                    ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      const Text(
+                                        'INFORMAÇÕES',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          letterSpacing: 2,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.edit, color: Colors.black),
+                                        onPressed: () async {
+                                          final result = await Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => const EditProfileScreen(),
+                                            ),
+                                          );
+                                          if (result == true) {
+                                            _loadProfile();
+                                          }
+                                        },
+                                        tooltip: 'Editar Perfil',
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(height: 20),
+                                  const SizedBox(height: 12),
                                   
                                   // Email
                                   _buildInfoRow(
@@ -241,12 +355,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   
                                   const Divider(height: 32),
                                   
+                                  // CPF
+                                  _buildInfoRow(
+                                    icon: Icons.badge,
+                                    label: 'CPF',
+                                    value: _formatCPF(_profile!.cpf),
+                                  ),
+                                  
+                                  const Divider(height: 32),
+                                  
                                   // Telefone
                                   _buildInfoRow(
                                     icon: Icons.phone,
                                     label: 'Telefone',
                                     value: _profile!.phone ?? 'Não informado',
+                                    isMissing: _profile!.phone == null,
                                   ),
+                                  
+                                  if (_profile!.birthDate != null) ...[
+                                    const Divider(height: 32),
+                                    _buildInfoRow(
+                                      icon: Icons.cake,
+                                      label: 'Data de Nascimento',
+                                      value: _formatDate(_profile!.birthDate!),
+                                    ),
+                                  ],
+                                  
+                                  if (_profile!.address != null) ...[
+                                    const Divider(height: 32),
+                                    _buildInfoRow(
+                                      icon: Icons.home,
+                                      label: 'Endereço',
+                                      value: _profile!.address!,
+                                    ),
+                                  ],
+                                  
+                                  if (_profile!.city != null || _profile!.state != null) ...[
+                                    const Divider(height: 32),
+                                    _buildInfoRow(
+                                      icon: Icons.location_city,
+                                      label: 'Cidade/Estado',
+                                      value: '${_profile!.city ?? ''}, ${_profile!.state ?? ''}',
+                                    ),
+                                  ],
+                                  
+                                  if (_profile!.zipCode != null) ...[
+                                    const Divider(height: 32),
+                                    _buildInfoRow(
+                                      icon: Icons.map,
+                                      label: 'CEP',
+                                      value: _profile!.zipCode!,
+                                    ),
+                                  ],
+                                  
+                                  if (_profile!.bio != null) ...[
+                                    const Divider(height: 32),
+                                    _buildInfoRow(
+                                      icon: Icons.description,
+                                      label: 'Bio',
+                                      value: _profile!.bio!,
+                                    ),
+                                  ],
                                   
                                   const Divider(height: 32),
                                   
@@ -297,10 +466,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required String label,
     required String value,
+    bool isMissing = false,
   }) {
     return Row(
       children: [
-        Icon(icon, color: Colors.black, size: 24),
+        Icon(
+          icon,
+          color: isMissing ? Colors.grey : Colors.black,
+          size: 24,
+        ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -317,10 +491,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black,
+                  color: isMissing ? Colors.grey : Colors.black,
                   fontWeight: FontWeight.w600,
+                  fontStyle: isMissing ? FontStyle.italic : FontStyle.normal,
                 ),
               ),
             ],
@@ -336,6 +511,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
     ];
     return '${date.day} ${months[date.month - 1]} ${date.year}';
+  }
+
+  String _formatCPF(String cpf) {
+    if (cpf.length == 11) {
+      return '${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9)}';
+    }
+    return cpf;
   }
 }
 
