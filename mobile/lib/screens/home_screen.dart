@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/token_storage.dart';
+import '../widgets/app_logo.dart';
 import 'profile_screen.dart';
 import 'edit_profile_screen.dart';
 
@@ -210,52 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     const SizedBox(height: 30),
                     // Logo/Placa pequena
-                    Container(
-                      width: 100,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(6),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(0, 5),
-                          ),
-                        ],
-                      ),
-                      child: const Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'AppEAO',
-                            style: TextStyle(
-                              color: Color(0xFFFFD700),
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                          SizedBox(height: 4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.construction,
-                                size: 16,
-                                color: Color(0xFFFFD700),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(
-                                Icons.handshake,
-                                size: 16,
-                                color: Color(0xFFFFD700),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                    const AppLogo.small(),
                     const SizedBox(height: 20),
                     const Text(
                       'Bem-vindo!',

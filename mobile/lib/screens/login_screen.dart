@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import '../services/token_storage.dart';
+import '../widgets/app_logo.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
 
@@ -89,32 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 60),
                 
                 // Logo/Título
-                const Icon(
-                  Icons.construction,
-                  size: 100,
-                  color: Colors.black,
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'AppEAO',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 42,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const Text(
-                  'MÃO DE OBRA',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black,
-                    letterSpacing: 3,
-                  ),
-                ),
+                const AppLogo.medium(),
                 
                 const SizedBox(height: 60),
                 

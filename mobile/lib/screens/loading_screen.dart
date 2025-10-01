@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/token_storage.dart';
 import '../services/auth_service.dart';
+import '../widgets/app_logo.dart';
 import 'login_screen.dart';
 import 'home_screen.dart';
 
@@ -119,69 +120,7 @@ class _LoadingScreenState extends State<LoadingScreen>
                     child: child,
                   );
                 },
-                child: Container(
-                  width: 200,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 15,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo/Nome do App
-                      const Text(
-                        'AppEAO',
-                        style: TextStyle(
-                          color: Color(0xFFFFD700),
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      // Subtítulo
-                      const Text(
-                        'MÃO DE OBRA',
-                        style: TextStyle(
-                          color: Color(0xFFFFD700),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 3,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Listras de obra
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          8,
-                          (index) => Container(
-                            width: 20,
-                            height: 4,
-                            margin: const EdgeInsets.symmetric(horizontal: 1),
-                            decoration: BoxDecoration(
-                              color: index % 2 == 0
-                                  ? const Color(0xFFFFD700)
-                                  : Colors.black,
-                              border: Border.all(
-                                color: const Color(0xFFFFD700),
-                                width: 0.5,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                child: const AppLogo.large(),
               ),
               const SizedBox(height: 50),
               // Martelo animado

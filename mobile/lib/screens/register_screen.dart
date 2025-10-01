@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../services/auth_service.dart';
 import '../services/token_storage.dart';
+import '../widgets/app_logo.dart';
 import '../models/country.dart';
 import 'home_screen.dart';
 
@@ -112,32 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               const SizedBox(height: 20),
               
               // Logo/Título
-              const Icon(
-                Icons.construction,
-                size: 80,
-                color: Colors.black,
-              ),
-              const SizedBox(height: 16),
-              const Text(
-                'AppEAO',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  letterSpacing: 2,
-                ),
-              ),
-              const Text(
-                'MÃO DE OBRA',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
-                  letterSpacing: 3,
-                ),
-              ),
+              const AppLogo.medium(),
               
               const SizedBox(height: 40),
               
