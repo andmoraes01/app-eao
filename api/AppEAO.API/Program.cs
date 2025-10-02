@@ -43,9 +43,13 @@ builder.Services.AddAuthorization();
 
 // Registrar dependências - Repositories (Infrastructure)
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
+builder.Services.AddScoped<IServiceProposalRepository, ServiceProposalRepository>();
 
 // Registrar dependências - Services (Application)
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<IServiceProposalService, ServiceProposalService>();
 
 // Configurar CORS
 builder.Services.AddCors(options =>

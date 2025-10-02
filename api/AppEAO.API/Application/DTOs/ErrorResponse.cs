@@ -19,5 +19,9 @@ public class ErrorResponse
         Message = message;
         ErrorCode = errorCode;
     }
+    
+    public ErrorResponse()
+    {
+    }
 }
 

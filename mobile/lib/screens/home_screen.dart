@@ -4,6 +4,10 @@ import '../services/token_storage.dart';
 import '../widgets/app_logo.dart';
 import 'profile_screen.dart';
 import 'edit_profile_screen.dart';
+import 'service_list_screen.dart';
+import 'create_service_screen.dart';
+import 'my_services_screen.dart';
+import 'my_proposals_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -273,20 +277,76 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 30),
 
                     // Cards de funcionalidades
-                    _buildFeatureCard(
-                      icon: Icons.work,
-                      title: 'Oferta de Serviços',
-                      description:
-                          'Profissionais podem cadastrar seus serviços e habilidades',
-                      color: const Color(0xFFFFD700),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ServiceListScreen(),
+                          ),
+                        );
+                      },
+                      child: _buildFeatureCard(
+                        icon: Icons.search,
+                        title: 'Buscar Serviços',
+                        description:
+                            'Encontre serviços disponíveis e faça propostas',
+                        color: const Color(0xFFFFD700),
+                      ),
                     ),
                     const SizedBox(height: 16),
-                    _buildFeatureCard(
-                      icon: Icons.search,
-                      title: 'Busca de Profissionais',
-                      description:
-                          'Encontre rapidamente o profissional ideal para seu projeto',
-                      color: Colors.black,
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CreateServiceScreen(),
+                          ),
+                        );
+                      },
+                      child: _buildFeatureCard(
+                        icon: Icons.add_circle,
+                        title: 'Oferecer Serviço',
+                        description:
+                            'Cadastre um novo serviço que você precisa',
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyServicesScreen(),
+                          ),
+                        );
+                      },
+                      child: _buildFeatureCard(
+                        icon: Icons.work,
+                        title: 'Minhas Ofertas',
+                        description:
+                            'Visualize e gerencie seus serviços oferecidos',
+                        color: Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const MyProposalsScreen(),
+                          ),
+                        );
+                      },
+                      child: _buildFeatureCard(
+                        icon: Icons.description,
+                        title: 'Minhas Propostas',
+                        description:
+                            'Acompanhe suas propostas enviadas',
+                        color: Colors.green,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildFeatureCard(

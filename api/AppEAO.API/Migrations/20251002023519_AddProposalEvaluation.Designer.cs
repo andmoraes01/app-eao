@@ -4,6 +4,7 @@ using AppEAO.API.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AppEAO.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251002023519_AddProposalEvaluation")]
+    partial class AddProposalEvaluation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,8 +139,12 @@ namespace AppEAO.API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Active");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -158,8 +165,8 @@ namespace AppEAO.API.Migrations
                     b.HasIndex("ServiceType")
                         .HasDatabaseName("IX_Services_ServiceType");
 
-                    b.HasIndex("StatusId")
-                        .HasDatabaseName("IX_Services_StatusId");
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_Services_Status");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_Services_UserId");
@@ -274,8 +281,12 @@ namespace AppEAO.API.Migrations
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<int>("StatusId")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Pending");
 
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
@@ -291,49 +302,10 @@ namespace AppEAO.API.Migrations
                     b.HasIndex("ServiceId")
                         .HasDatabaseName("IX_ServiceProposals_ServiceId");
 
-                    b.HasIndex("StatusId")
-                        .HasDatabaseName("IX_ServiceProposals_StatusId");
+                    b.HasIndex("Status")
+                        .HasDatabaseName("IX_ServiceProposals_Status");
 
                     b.ToTable("ServiceProposals", (string)null);
-                });
-
-            modelBuilder.Entity("AppEAO.API.Domain.Entities.Status", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Color")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Statuses", (string)null);
                 });
 
             modelBuilder.Entity("AppEAO.API.Domain.Entities.User", b =>
@@ -440,19 +412,11 @@ namespace AppEAO.API.Migrations
 
             modelBuilder.Entity("AppEAO.API.Domain.Entities.Service", b =>
                 {
-                    b.HasOne("AppEAO.API.Domain.Entities.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("AppEAO.API.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Status");
 
                     b.Navigation("User");
                 });
@@ -482,17 +446,9 @@ namespace AppEAO.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AppEAO.API.Domain.Entities.Status", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Contractor");
 
                     b.Navigation("Service");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("AppEAO.API.Domain.Entities.Service", b =>
